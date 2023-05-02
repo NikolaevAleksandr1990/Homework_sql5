@@ -114,7 +114,7 @@ def find_client(cur, first_name=None, last_name=None, email=None, phone=None):
                 """, (first_name, last_name, email))
     else:
         cur.execute("""
-                SELECT c.id, c.first_name, c.last_name, c.email, p.phones FROM clients c
+                SELECT c.id, c.first_name, c.last_name, c.email,p.phones FROM clients c
                 LEFT JOIN phonenumbers p ON c.id = p.client_id
                 WHERE c.first_name LIKE %s AND c.last_name LIKE %s
                 AND c.email LIKE %s AND p.phones like %s
@@ -122,9 +122,20 @@ def find_client(cur, first_name=None, last_name=None, email=None, phone=None):
     return cur.fetchall()
 
 
+def all_clients(cur):
+    cur.execute("""
+        SELECT * FROM clients;
+        """)
+    print(cur.fetchall())
+    cur.execute("""
+        SELECT * FROM phonenumbers;
+        """)
+    print(cur.fetchall())
+
+
 with psycopg2.connect(database='homework_5', user='postgres', password='Lolit6830023') as conn:
     with conn.cursor() as curs:
-        # delete_db(curs)
+        delete_db(curs)
         create_db(curs)
         # print('БД создана')
         # Добавляем клиентов
@@ -152,4 +163,4 @@ with psycopg2.connect(database='homework_5', user='postgres', password='Lolit683
         find_client(curs, 'Анна', 'Резник', 'Anna_R91@yandex.ru')
         find_client(curs, None, None, None, '79498477192')
 
-conn.close()
+        all_clients(curs)
